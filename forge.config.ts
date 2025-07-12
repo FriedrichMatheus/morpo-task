@@ -1,30 +1,32 @@
-const { FusesPlugin } = require('@electron-forge/plugin-fuses');
-const { FuseV1Options, FuseVersion } = require('@electron/fuses');
+import { FusesPlugin } from '@electron-forge/plugin-fuses';
+import { FuseV1Options, FuseVersion } from'@electron/fuses';
+import type { ForgeConfig } from '@electron-forge/shared-types';
 
-module.exports = {
+const config: ForgeConfig = {
   packagerConfig: {
     asar: true,
+    osxSign: {}
   },
-  rebuildConfig: {},
   makers: [
     {
       name: '@electron-forge/maker-squirrel',
-      config: {},
+      platforms: ['win32'],
+      config: {
+        authors: "Electron contributors"
+      }
     },
     {
       name: '@electron-forge/maker-zip',
       platforms: ['darwin'],
+      config: {}
     },
     {
       name: '@electron-forge/maker-deb',
-      config: {},
-    },
-    {
-      name: '@electron-forge/maker-rpm',
-      config: {},
+      platforms: ['linux'],
+      config: {}
     },
   ],
-  plugins: [
+   plugins: [
     {
       name: '@electron-forge/plugin-vite',
       config: {
@@ -33,12 +35,12 @@ module.exports = {
         build: [
           {
             // `entry` is just an alias for `build.lib.entry` in the corresponding file of `config`.
-            entry: 'src/back/main.js',
+            entry: 'src/back/main.ts',
             config: 'vite.main.config.mjs',
             target: 'main',
           },
           {
-            entry: 'src/ui/preload.js',
+            entry: 'src/ui/preload.ts',
             config: 'vite.preload.config.mjs',
             target: 'preload',
           },
@@ -63,4 +65,8 @@ module.exports = {
       [FuseV1Options.OnlyLoadAppFromAsar]: true,
     }),
   ],
+
 };
+
+export default config;
+

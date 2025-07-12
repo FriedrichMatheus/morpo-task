@@ -1,6 +1,15 @@
-import { useForm } from "react-hook-form"
+import { useForm, UseFormRegister, FieldValues } from "react-hook-form"
+import { TaskDTO } from "../../../commons/models";
 
-const Input = ({ label, placeholder, name, register, required }) => (
+interface InputProps {
+    label?: string;
+    placeholder: string;
+    name: string;
+    register: UseFormRegister<FieldValues>;
+    required?: boolean;
+}
+
+const Input = ({ label, placeholder, name, register, required }: InputProps) => (
     <> 
         { label && <label>{label}</label> }
         <input className="border-gray-700 border-2 focus:border-gray-400 focus:outline-gray-400 text-gray-800 rounded-sm p-1" placeholder={placeholder}  {...register(name, { required })}/>
@@ -10,7 +19,7 @@ const Input = ({ label, placeholder, name, register, required }) => (
 function TaskPage() {
     const { register, handleSubmit } = useForm();
 
-    const createTask = (task) => {
+    const createTask = (task: TaskDTO) => {
         window.taskAPI.createTask(task);
     }
 
@@ -19,7 +28,7 @@ function TaskPage() {
             <h1>Task List</h1>
 
             <form onSubmit={handleSubmit(createTask)}>
-                <Input register={register} name={"task"} placeholder={"Escreva sua atividade"} required  />
+                <Input register={register} name={"description"} placeholder={"Escreva sua atividade"} required  />
             </form>
         </main>
     )
