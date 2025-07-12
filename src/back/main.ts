@@ -1,9 +1,18 @@
 import { app, BrowserWindow, ipcMain } from 'electron';
 import path from 'node:path';
-import started from 'electron-squirrel-startup';
 import { TASK_EVENTS } from '../commons/events';
 
-if (started) {
+const squirrelStartup = process.platform === 'win32'
+  ? (() => {
+      try {
+        return require('electron-squirrel-startup');
+      } catch {
+        return false;
+      }
+    })()
+  : false;
+
+if (squirrelStartup) {
   app.quit();
 }
 

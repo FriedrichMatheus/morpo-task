@@ -20,7 +20,9 @@ function TaskPage() {
     const { register, handleSubmit } = useForm();
 
     const createTask = (task: TaskDTO) => {
-        window.taskAPI.createTask(task);
+        if(window.taskAPI) {
+            window.taskAPI.createTask(task);
+        }
     }
 
     return (
