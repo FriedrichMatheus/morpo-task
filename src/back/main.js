@@ -2,6 +2,7 @@ import { app, BrowserWindow, ipcMain } from 'electron';
 import path from 'node:path';
 import started from 'electron-squirrel-startup';
 import { TASK_EVENTS } from '../commons/events';
+import TaskService from './services/task/service';
 
 if (started) {
   app.quit();
@@ -27,13 +28,16 @@ const createWindow = () => {
 };
 
 
+const taskService = new TaskService();
+
 
 app.whenReady().then(() => {
   createWindow();
   console.log("window activated")    
 
   ipcMain.on(TASK_EVENTS.CREATE, (event, data) => {
-    console.log(data);      
+    taskService.createTask(data);
+    console.log(taskService.getAllTask());
   });
 
 
