@@ -1,17 +1,22 @@
-import { createRoot } from 'react-dom/client';
-import { HashRouter, Routes, Route } from "react-router-dom"
-import TaskPage from './pages/task/page';
+import { createRoot } from "react-dom/client";
+import { HashRouter, Routes, Route } from "react-router-dom";
+import TaskPage from "./pages/task/page";
+import { NavBar } from "./components/navbar";
+import { AppRoutes } from "../commons/routes";
 
-const App = () =>{
+const App = () => {
     return (
-        <HashRouter>
-            <Routes>
-                <Route path='/' element={<TaskPage />}/>
-            </Routes>
-        </HashRouter>
-    )
+        <div className="bg-background-main rounded-lg h-screen overflow-hidden">
+            <HashRouter>
+                <NavBar />
+                <Routes>
+                    <Route path={AppRoutes.TASK.LIST} element={<TaskPage />} />
+                </Routes>
+            </HashRouter>
+        </div>
+    );
 };
 
 const container = document.getElementById("root");
 const root = createRoot(container);
-root.render(<App/>);
+root.render(<App />);

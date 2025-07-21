@@ -1,39 +1,30 @@
-import { useForm, UseFormRegister, FieldValues } from "react-hook-form"
+import { useEffect, useState } from "react";
+import { TaskList } from "./components/task-list";
 import { TaskDTO } from "../../../commons/models";
-
-interface InputProps {
-    label?: string;
-    placeholder: string;
-    name: string;
-    register: UseFormRegister<FieldValues>;
-    required?: boolean;
-}
-
-const Input = ({ label, placeholder, name, register, required }: InputProps) => (
-    <> 
-        { label && <label>{label}</label> }
-        <input className="border-gray-700 border-2 focus:border-gray-400 focus:outline-gray-400 text-gray-800 rounded-sm p-1" placeholder={placeholder}  {...register(name, { required })}/>
-    </> 
-);
+import { Plus } from "lucide-react";
 
 function TaskPage() {
-    const { register, handleSubmit } = useForm();
+    const [tasks, setTasks] = useState<TaskDTO[]>([]);
 
-    const createTask = (task: TaskDTO) => {
-        if(window.taskAPI) {
-            window.taskAPI.createTask(task);
-        }
-    }
+    useEffect(() => window.taskAPI.getAllTask(), []);
+
+    window.taskAPI.receiveTasks((event, tasks) => {
+        setTasks(tasks);
+    });
 
     return (
-        <main>
-            <h1>Task List</h1>
-
-            <form onSubmit={handleSubmit(createTask)}>
-                <Input register={register} name={"description"} placeholder={"Escreva sua atividade"} required  />
-            </form>
+        <main className="flex flex-col h-full text-base px-6 pb-14">
+            <div className="h-full">
+                {tasks.length > 0 ? (
+                    <TaskList tasks={tasks} />
+                ) : (
+                    <button className="flex focus:outline-none w-full h-full animate-pulse italic rounded-md justify-center items-center align-middle pb-24">
+                        <Plus /> create a card... ᓚ₍ ^. .^₎
+                    </button>
+                )}
+            </div>
         </main>
-    )
+    );
 }
 
 export default TaskPage;

@@ -1,1 +1,48 @@
-@import "tailwindcss"
+@import "tailwindcss";
+
+* {
+  user-select: none;
+}
+
+@theme {
+  --color-background-main: #1a1c24; /* Fundo principal */
+  --color-card-box: #2a2d37; /* Card/Box das categorias */
+  --color-base: #e4e4e4; /* Texto normal */
+  --color-button-delete: #3b3f4e; /* Botão DELETE */
+  --color-button-text: #d0d0d0; /* Texto do botão */
+  --color-input-bg: #2f323d; /* Campo de input (search) */
+  --color-placeholder-text: #6d6d6d; /* Placeholder */
+}
+
+.draggable {
+  -webkit-app-region: drag;
+}
+
+.non-draggable {
+  -webkit-app-region: no-drag;
+}
+
+body {
+  margin: 0;
+  background-color: rgba(0, 0, 0, 0);
+}
+
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #3b3f4e #1a1c24;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #1a1c24;
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #3b3f4e;
+  border-radius: 10px;
+  border: 2px solid #1a1c24;
+}

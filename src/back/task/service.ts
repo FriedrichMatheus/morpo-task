@@ -9,18 +9,18 @@ export default class TaskService {
     }
 
     createTask(task: TaskDTO) {
-        insertTask(task);
+        this.repository.insertTask(task);
     }
     getAllTask() {
-        return getAllTask();
+        return this.repository.getAllTask();
     }
     updateTaskById(task: TaskDTO) {
-        updateTaskById(task);
+        this.repository.updateTaskById(task);
     }
     deleteTaskById(id: number) {
-        deleteTaskById(id);
+        this.repository.deleteTaskById(id);
     }
     getTaskById(id: number) {
-        return getTaskById(id);
+        return this.repository.getTaskById(id);
     }
 }

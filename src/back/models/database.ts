@@ -1,6 +1,6 @@
-import SQLite from "better-sqlite3"
+import SQLite from "better-sqlite3";
 
-type ColumnType = "INTEGER" | "TEXT"; 
+type ColumnType = "INTEGER" | "TEXT";
 
 class Column {
     name: string;
@@ -10,8 +10,14 @@ class Column {
     isPrimary: boolean;
     required: boolean;
 
-    constructor(name: string, type: ColumnType, isPrimary: boolean = false,
-    autoIncrement: boolean = true, required: boolean = false, unique: boolean = false) {
+    constructor(
+        name: string,
+        type: ColumnType,
+        isPrimary: boolean = false,
+        autoIncrement: boolean = true,
+        required: boolean = false,
+        unique: boolean = false,
+    ) {
         this.name = name;
         this.type = type;
         this.autoIncrement = autoIncrement;
@@ -19,26 +25,28 @@ class Column {
         this.required = required;
         this.unique = unique;
     }
-    
+
     private getColumnModifiers() {
         let modifiers: string[] = [];
 
-        if(this.isPrimary) {
+        if (this.isPrimary) {
             modifiers.push("PRIMARY KEY");
-            if(this.autoIncrement) modifiers.push("AUTOINCREMENT");
+            if (this.autoIncrement) modifiers.push("AUTOINCREMENT");
 
             return modifiers;
         }
-        if(this.required) {
-            modifiers.push("NOT NULL")
+        if (this.required) {
+            modifiers.push("NOT NULL");
         }
-        if(this.unique) {
-            modifiers.push("UNIQUE")
+        if (this.unique) {
+            modifiers.push("UNIQUE");
         }
+
+        return modifiers;
     }
 
-    _stringfyColumn () { 
-        return this.name + this.type + this.getColumnModifiers.toString();
+    _stringfyColumn() {
+        return `${this.name} ${this.type} ${this.getColumnModifiers().join(" ")}`;
     }
 }
 
@@ -60,11 +68,20 @@ class Table {
     }
 
     private _getColumnsString() {
-        return this.columns.map(i => i._stringfyColumn()).toString();
+        return this.columns.map((i) => i._stringfyColumn()).toString();
     }
 
     private _getColumnsByKey(keys: string[]) {
-        return keys.map(i => this.columns.find(c => c.name === i));
+        return keys.map((i) => this.columns.find((c) => c.name === i));
+    }
+
+    _stringfySelectRow(filters?: Object, columns?: string[]) {
+        const filterKeys = filters && Object.keys(filters);
+
+        return `SELECT ${!!columns ? columns.toString() : "*"}
+                  FROM ${this.name}
+                 WHERE 1 = 1
+                    ${!!filters ? `AND ${filterKeys.map((i) => `${i} = @${i}`).toString()}` : ""}`;
     }
 
     _stringfyInsertRow(objToInsert: Object) {
@@ -72,28 +89,29 @@ class Table {
 
         const columns = this._getColumnsByKey(keys);
 
-        return `INSERT INTO ${this.name}(${columns.toString()}) 
-                     VALUES (${columns.map(i => `@${i}`).toString()})`;
+        return `INSERT INTO ${this.name}(${columns.map((i) => i.name).toString()}) 
+                     VALUES (${columns.map((i) => `@${i.name}`).toString()})`;
     }
-    
+
     _stringfyDeleteRow(findBy: Object) {
         const keysToFind = Object.keys(findBy);
 
-        return `DELETE ${this.name} 
+        return `DELETE FROM ${this.name} 
                  WHERE 1 = 1 
-                       ${keysToFind.map(i => `${i} = @${i}`).fill(" AND ")}`
+                   AND ${keysToFind.map((i) => `${i} = @${i}`).join(" AND ")}`;
     }
 
     _stringfyUpdateRow(findBy: Object, objToUpdate: Object) {
-        const keysToUpdate = Object.keys(objToUpdate)
+        const keysToUpdate = Object.keys(objToUpdate);
         const keysToFind = Object.keys(findBy);
 
         const columnsToUpdate = this._getColumnsByKey(keysToUpdate);
         const columnsToFind = this._getColumnsByKey(keysToFind);
 
         return `UPDATE ${this.name} 
-                   SET ${columnsToUpdate.map(i => `${i} = @${i}`)} 
-                 WHERE ${columnsToFind.map(i => `${i} = @${i}`).fill(" AND ")}`
+                   SET ${columnsToUpdate.map((i) => `${i.name} = @${i.name}`).toString()} 
+                 WHERE 1 = 1
+                   AND ${columnsToFind.map((i) => `${i.name} = @${i.name}`).join(" AND ")}`;
     }
 
     _stringfyCreateTable() {
@@ -106,13 +124,22 @@ class Table {
 class Database {
     db: SQLite.Database;
     constructor(dbPath: string) {
+        console.log(dbPath);
         this.db = new SQLite(dbPath);
-        this.db.pragma('journal_mode = WAL');
+        this.db.pragma("journal_mode = WAL");
     }
 
     createTable(table: Table) {
         this.db.exec(table._stringfyCreateTable());
     }
+
+    query(query: string, obj?: Object) {
+        console.log(query, obj);
+
+        if (!obj) return this.db.prepare(query).all();
+        console.log("run");
+        return this.db.prepare(query).run(obj);
+    }
 }
 
-export { Database, Column }
+export { Database, Table, Column };
