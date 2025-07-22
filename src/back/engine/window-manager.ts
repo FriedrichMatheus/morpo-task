@@ -13,7 +13,7 @@ const WINDOWS_MAP = {
     [WINDOW_TYPE.HOME]: {
         width: 1200,
         height: 800,
-        initialPath: "",
+        initialPath: AppRoutes.HOME,
         resizable: true,
         alwaysOnTop: false,
         windowType: {
@@ -56,7 +56,9 @@ class MorpoWindowManager {
         if (!windowProps) return;
         const window = this.handleSingleInstance(type);
 
-        this.windows[window.id] = window;
+        if (!this.windows[window.id]) {
+            this.windows[window.id] = window;
+        }
     }
 
     handleSingleInstance(type: string) {
@@ -65,22 +67,24 @@ class MorpoWindowManager {
 
         let window = this.singleInstanceWindows[type];
         if (window) {
+            console.log(`focus ${window.id}`);
             window.focus();
+            return;
         }
 
         window = new MorpoWindow(WINDOWS_MAP[type]);
-
+        console.log(window.id);
         this.singleInstanceWindows[type] = window;
         this.windows[window.id] = window;
-
+        console.log(window);
         return window;
     }
 
     closeWindowById(id: string) {
         this.windows[id].close();
 
+        delete this.singleInstanceWindows[this.windows[id].windowType.type];
         delete this.windows[id];
-        delete this.singleInstanceWindows[id];
     }
 
     minimizeWindowById(id: string) {

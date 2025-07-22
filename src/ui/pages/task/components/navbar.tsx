@@ -1,6 +1,5 @@
 import { Minus, X } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
-import { WINDOW_TYPE } from "../../commons/windows";
 
 function NavBar() {
     const [searchParams] = useSearchParams();
@@ -11,16 +10,9 @@ function NavBar() {
     const minimizeWindowById = () =>
         windowId && window.windowAPI.minimizeWindowById(windowId);
 
-    const openWindowByType = (type: string, args?: any) => window.windowAPI.openWindow({type, args})
-
     return (
         <nav className="h-16 w-full flex align-middle px-6 mb-6 items-center text-base text-2xl draggable justify-between">
-            <div className="flex gap-6 align-middle items-center justify-center">
-                <h1>morpo</h1>
-                <ul className="text-lg">
-                    <li className="hover:text-input-bg non-draggable"><button onClick={() => openWindowByType(WINDOW_TYPE.TASK_LIST)}>tasks</button></li>
-                </ul>
-            </div>
+            <h1>morpo</h1>
             <div className="flex non-draggable">
                 <button
                     className="focus:outline-none"
