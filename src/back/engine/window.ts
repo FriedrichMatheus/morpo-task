@@ -13,15 +13,30 @@ interface WindowProps {
     initialPath: string;
 }
 
+interface IWindowSize {
+    width: number;
+    height: number;
+}
+
 class MorpoWindow {
     private window: BrowserWindow;
+    private initialSize: IWindowSize;
     id: UUID;
+    fullScreenOn: boolean;
     windowType: IWindowType;
 
-    constructor({ initialPath, windowType, ...props }: WindowProps) {
+    constructor({
+        initialPath,
+        windowType,
+        width,
+        height,
+        ...props
+    }: WindowProps) {
         this.window = new BrowserWindow({
             thickFrame: false,
             frame: false,
+            width: width,
+            height: height,
             transparent: true,
             autoHideMenuBar: true,
             icon: "assets/icon.png",
@@ -30,12 +45,37 @@ class MorpoWindow {
             },
             ...props,
         });
+        this.initialSize = { width, height };
+
         this.windowType = windowType;
         this.id = randomUUID();
         this.navigate(initialPath);
     }
 
+    fullScreen() {
+        this.fullScreenOn = !this.fullScreenOn;
+        this.window.setFullScreen(!this.fullScreenOn);
+    }
+
+    resize(size?: IWindowSize) {
+        if (!size) {
+            if (this.fullScreenOn) {
+                this.fullScreen();
+            }
+
+            this.window.setSize(
+                this.initialSize.width,
+                this.initialSize.height,
+                true,
+            );
+            return;
+        }
+
+        this.window.setSize(size.width, size.height, true);
+    }
+
     focus() {
+        this.window.show();
         this.window.focus();
     }
 

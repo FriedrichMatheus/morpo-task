@@ -6,7 +6,7 @@ import { AppRoutes } from "../commons/routes";
 
 const App = () => {
     return (
-        <div className="bg-background-main rounded-lg h-screen overflow-hidden">
+        <div className="bg-background-main 2xl:rounded-none rounded-lg h-screen overflow-hidden">
             <HashRouter>
                 <NavBar />
                 <Routes>

@@ -25,6 +25,8 @@ type WindowApi = {
     openWindow: ({ type, args }: { type: string; args: any }) => void;
     closeWindowById: (id: string) => void;
     minimizeWindowById: (id: string) => void;
+    resizeWindowById: (id: string) => void;
+    fullscreenWindowById: (id: string) => void;
 };
 
 const windowAPI: WindowApi = {
@@ -32,6 +34,9 @@ const windowAPI: WindowApi = {
         ipcRenderer.send(WINDOW_EVENTS.OPEN, { type, args }),
     minimizeWindowById: (id) => ipcRenderer.send(WINDOW_EVENTS.MINIMIZE, { id }),
     closeWindowById: (id) => ipcRenderer.send(WINDOW_EVENTS.CLOSE, { id }),
+    fullscreenWindowById: (id) =>
+        ipcRenderer.send(WINDOW_EVENTS.FULLSCREEN, { id }),
+    resizeWindowById: (id) => ipcRenderer.send(WINDOW_EVENTS.RESIZE, { id }),
 };
 
 contextBridge.exposeInMainWorld("windowAPI", windowAPI);

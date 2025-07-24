@@ -68,6 +68,10 @@ const events: IEvents[] = [
         event: WINDOW_EVENTS.MINIMIZE,
         handler: (event, data) => windowManager.minimizeWindowById(data.id),
     },
+    {
+        event: WINDOW_EVENTS.FULLSCREEN,
+        handler: (event, data) => windowManager.fullscreenWindowById(data.id),
+    },
 ];
 
 export { events, windowManager };

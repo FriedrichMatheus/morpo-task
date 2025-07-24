@@ -14,7 +14,7 @@ const WINDOWS_MAP = {
         width: 1200,
         height: 800,
         initialPath: AppRoutes.HOME,
-        resizable: true,
+        resizable: false,
         alwaysOnTop: false,
         windowType: {
             type: WINDOW_TYPE.HOME,
@@ -67,17 +67,24 @@ class MorpoWindowManager {
 
         let window = this.singleInstanceWindows[type];
         if (window) {
-            console.log(`focus ${window.id}`);
             window.focus();
-            return;
+            return window;
         }
 
         window = new MorpoWindow(WINDOWS_MAP[type]);
-        console.log(window.id);
         this.singleInstanceWindows[type] = window;
         this.windows[window.id] = window;
-        console.log(window);
         return window;
+    }
+
+    fullscreenWindowById(id: string) {
+        const window = this.windows[id];
+        if (!window.fullScreenOn) {
+            window.fullScreen();
+            return;
+        }
+
+        window.resize();
     }
 
     closeWindowById(id: string) {
